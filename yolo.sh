@@ -24,4 +24,4 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install git openssh-server xrdp cifs-u
 
 # Clone this repository locally (if needed) and update it
 git clone "https://github.com/jbillo/mediavessel.git" "${HOME}/mediavessel" || true
-pushd "${HOME}/mediavessel"; git fetch --all; git reset --hard origin/master; popd
+pushd "${HOME}/mediavessel"; git fetch --all; git reset --hard origin/main; popd
