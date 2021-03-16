@@ -47,13 +47,12 @@ def daemon_reload():
     subprocess.run(["systemctl", "daemon-reload"])
 
 
-def service_enable_and_start(unit_name_prefix: str):
-    subprocess.run(["systemctl", "enable", unit_name_prefix])
-    subprocess.run(["systemctl", "start", unit_name_prefix])
+def service_start_and_enable(unit_name_prefix: str):
+    subprocess.run(["systemctl", "start", f'{unit_name_prefix}.automount'])
+    subprocess.run(["systemctl", "enable", f'{unit_name_prefix}.automount'])
 
 
 def _main():
-
     parser = argparse.ArgumentParser()
     parser.add_argument('what', help='The resource to mount, usually the remote CIFS or NFS server and path, '
                                      'eg: //server/data')
@@ -78,7 +77,7 @@ def _main():
     generate_automount(args.where, unit_name_prefix, args.description)
     generate_mount(args.what, args.where, unit_name_prefix, args.description, args.type, args.options)
     daemon_reload()
-    service_enable_and_start(unit_name_prefix)
+    service_start_and_enable(unit_name_prefix)
 
 
 if __name__ == '__main__':
