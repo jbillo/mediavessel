@@ -3,6 +3,8 @@ import argparse
 import os
 import subprocess
 
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+
 
 def try_create_directory(where: str):
     try:
@@ -12,7 +14,7 @@ def try_create_directory(where: str):
 
 
 def generate_automount(where: str, unit_name_prefix: str, description: str = ''):
-    with open(os.path.join('templates', 'automount.template')) as f:
+    with open(os.path.join(SCRIPT_DIR, 'templates', 'automount.template')) as f:
         content = f.read()
 
     # Could replace with Jinja2 or another templating engine, but that would require additional pips
@@ -26,7 +28,7 @@ def generate_automount(where: str, unit_name_prefix: str, description: str = '')
 
 def generate_mount(what: str, where: str, unit_name_prefix: str, description: str = '', mount_type: str = 'cifs',
                    options: str = ''):
-    with open(os.path.join('templates', 'mount.template')) as f:
+    with open(os.path.join(SCRIPT_DIR, 'templates', 'mount.template')) as f:
         content = f.read()
 
     # Could replace with Jinja2 or another templating engine, but that would require additional pips
@@ -51,6 +53,7 @@ def service_enable_and_start(unit_name_prefix: str):
 
 
 def _main():
+
     parser = argparse.ArgumentParser()
     parser.add_argument('what', help='The resource to mount, usually the remote CIFS or NFS server and path, '
                                      'eg: //server/data')
