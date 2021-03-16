@@ -6,10 +6,6 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-if [[ -z "${LOCAL_REPO_DIR}" ]]; then
-   LOCAL_REPO_DIR="/opt/mediavessel"
-fi
-
 # Check if we're root
 # https://askubuntu.com/questions/15853/how-can-a-script-check-if-its-being-run-as-root
 if [[ $EUID -ne 0 ]]; then
@@ -17,6 +13,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+echo "Will clone mediavessel repo to ${LOCAL_REPO_DIR:=/opt/mediavessel}"
 mkdir -p "${LOCAL_REPO_DIR}"
 
 # Ensure our package lists are updated and packages upgraded, and that we install security updates automatically
