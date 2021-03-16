@@ -20,4 +20,4 @@ DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 DEBIAN_FRONTEND=noninteractive apt-get -y install unattended-upgrades
 
 # Install useful system tools
-DEBIAN_FRONTEND=noninteractive apt-get -y install git openssh-server xrdp autofs
+DEBIAN_FRONTEND=noninteractive apt-get -y install git openssh-server xrdp autofs cifs-utils
