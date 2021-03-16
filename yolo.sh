@@ -25,6 +25,11 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install unattended-upgrades
 # Install useful system tools
 DEBIAN_FRONTEND=noninteractive apt-get -y install git openssh-server xrdp cifs-utils vim net-tools
 
+# Fix xrdp so that it can read the snakeoil certificate. Not critical to the whole operation though so ignore failure.
+# https://linuxize.com/post/how-to-install-xrdp-on-ubuntu-20-04/
+adduser xrdp ssl-cert || true
+systemctl restart xrdp || true
+
 # Clone this repository locally (if needed) and update it
 git clone "https://github.com/jbillo/mediavessel.git" "${LOCAL_REPO_DIR}" || true
 pushd "${LOCAL_REPO_DIR}"; git fetch --all; git reset --hard origin/main; popd
