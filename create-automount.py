@@ -4,6 +4,13 @@ import os
 import subprocess
 
 
+def try_create_directory(where: str):
+    try:
+        os.mkdir(where)
+    except FileExistsError:
+        pass
+
+
 def generate_automount(where: str, unit_name_prefix: str, description: str = ''):
     with open(os.path.join('templates', 'automount.template')) as f:
         content = f.read()
@@ -64,6 +71,7 @@ def _main():
         last_dash = args.where.rfind('-')
         args.description = args.description[last_dash:]
 
+    try_create_directory(args.where)
     generate_automount(args.where, unit_name_prefix, args.description)
     generate_mount(args.what, args.where, unit_name_prefix, args.description, args.type, args.options)
     daemon_reload()
