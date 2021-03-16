@@ -23,7 +23,7 @@ DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 DEBIAN_FRONTEND=noninteractive apt-get -y install unattended-upgrades
 
 # Install useful system tools
-DEBIAN_FRONTEND=noninteractive apt-get -y install git openssh-server xrdp cifs-utils vim
+DEBIAN_FRONTEND=noninteractive apt-get -y install git openssh-server xrdp cifs-utils vim net-tools
 
 # Clone this repository locally (if needed) and update it
 git clone "https://github.com/jbillo/mediavessel.git" "${LOCAL_REPO_DIR}" || true
