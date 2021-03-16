@@ -61,7 +61,7 @@ def _main():
     unit_name_prefix = unit_name_prefix.replace('/', '-')
 
     if not args.description:
-        last_dash = args.description.rfind('-')
+        last_dash = args.where.rfind('-')
         args.description = args.description[last_dash:]
 
     generate_automount(args.where, unit_name_prefix, args.description)
