@@ -6,12 +6,18 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+if [[ -z "${LOCAL_REPO_DIR}" ]]; then
+   LOCAL_REPO_DIR="/opt/mediavessel"
+fi
+
 # Check if we're root
 # https://askubuntu.com/questions/15853/how-can-a-script-check-if-its-being-run-as-root
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root" 
    exit 1
 fi
+
+mkdir -p "${LOCAL_REPO_DIR}"
 
 # Ensure our package lists are updated and packages upgraded, and that we install security updates automatically
 # https://unix.stackexchange.com/questions/107194/make-apt-get-update-and-upgrade-automate-and-unattended
@@ -23,5 +29,5 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install unattended-upgrades
 DEBIAN_FRONTEND=noninteractive apt-get -y install git openssh-server xrdp cifs-utils
 
 # Clone this repository locally (if needed) and update it
-git clone "https://github.com/jbillo/mediavessel.git" "${HOME}/mediavessel" || true
-pushd "${HOME}/mediavessel"; git fetch --all; git reset --hard origin/main; popd
+git clone "https://github.com/jbillo/mediavessel.git" "${LOCAL_REPO_DIR}" || true
+pushd "${LOCAL_REPO_DIR}"; git fetch --all; git reset --hard origin/main; popd
