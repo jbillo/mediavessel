@@ -1,0 +1,11 @@
+[Unit]
+Description={{ description }}
+
+[Mount]
+What={{ what }}
+Where={{ where }}
+Type={{ mount_type }}
+Options={{ options }}
+
+[Install]
+WantedBy=multi-user.target
