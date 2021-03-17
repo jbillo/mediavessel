@@ -29,7 +29,7 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install git openssh-server xrdp cifs-u
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
 DEBIAN_FRONTEND=noninteractive apt-get -y update
-DEBIAN_FRONTEND=noninteractive apt-get install docker-ce
+DEBIAN_FRONTEND=noninteractive apt-get -y install docker-ce
 
 # Install docker-compose from linuxserver.io
 curl -L --fail https://raw.githubusercontent.com/linuxserver/docker-docker-compose/master/run.sh -o /usr/local/bin/docker-compose
