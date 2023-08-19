@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Bootstrap an Ubuntu 20.04 system (VM or bare-metal) with some common tools. This has been tested on the Desktop ISO, but should work similarly for the server edition.
+# Bootstrap an Ubuntu 22.04 system (VM or bare-metal) with some common tools. 
+# This has been tested on the server edition with HWE kernel.
 # Credit to https://kvz.io/bash-best-practices.html for bash preamble
 
 set -o errexit
@@ -13,7 +14,11 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-echo "Will clone mediavessel repo to ${LOCAL_REPO_DIR:=/opt/mediavessel}"
+echo "Disabling password prompt for sudo group"
+# sudoers.d contents are processed after the /etc/sudoers file, so the NOPASSWD config takes precedence
+echo "%sudo  ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/nopasswd-sudo-group
+
+echo "Cloning mediavessel repo to ${LOCAL_REPO_DIR:=/opt/mediavessel}"
 mkdir -p "${LOCAL_REPO_DIR}"
 
 # Ensure our package lists are updated and packages upgraded, and that we install security updates automatically
@@ -22,8 +27,8 @@ DEBIAN_FRONTEND=noninteractive apt-get -y update
 DEBIAN_FRONTEND=noninteractive apt-get -y upgrade 
 DEBIAN_FRONTEND=noninteractive apt-get -y install unattended-upgrades
 
-# Install useful system tools
-DEBIAN_FRONTEND=noninteractive apt-get -y install git openssh-server xrdp cifs-utils vim net-tools apt-transport-https ca-certificates software-properties-common
+# Install useful system tools.
+DEBIAN_FRONTEND=noninteractive apt-get -y install git openssh-server cifs-utils vim net-tools apt-transport-https ca-certificates software-properties-common
 
 # Install Docker
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
