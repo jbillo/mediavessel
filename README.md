@@ -2,9 +2,9 @@
 Experiments with a containerized media server
 
 # Getting Started
-* Install Ubuntu 22.04 LTS, with HWE kernel option. Notable installation config includes:
-    * Use GPT/btrfs for root volume 
-    * Enable SSH for easy system access, but make sure the host is not directly exposed to the Internet
+Install Ubuntu 22.04 LTS, with HWE kernel option. Notable installation config includes:
+* Use GPT/btrfs for root volume 
+* Enable SSH for easy system access, but make sure the host is not directly exposed to the Internet
 
 Then pipe curl to sudo bash, as is the tradition with these web tools:
 
