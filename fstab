@@ -1,0 +1,20 @@
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/nvme0n1p2 during curtin installation
+/dev/disk/by-uuid/ec253407-2693-4e2d-a5d1-1f9494230b1f / btrfs defaults 0 1
+
+# Local volumes
+/dev/disk/by-uuid/68959000-2fa1-4e54-aef4-c1c94b1dc06f /mnt/searaid1 btrfs defaults 0 2
+/dev/disk/by-partuuid/b5402f34-d21e-4ced-8183-3871e5ca9bb9 /mnt/crucialmx1 ext4 defaults 0 2
+/dev/disk/by-partuuid/bfc7a070-e2d9-496b-a59e-faf360a7a67c /mnt/samsung860 ext4 defaults 0 2
+/dev/disk/by-partuuid/a6710a02-9429-41c5-ad96-487aed1788bc /mnt/intel240 ext4 defaults 0 2
+
+# Remote volumes
+//192.168.1.50/Data /mnt/5n2 smb3 guest,rw,uid=1000,file_mode=0777,dir_mode=0777 0 0
+//192.168.1.4/Data /mnt/drobo5n smb3 guest,rw,uid=1000,file_mode=0777,dir_mode=0777 0 0
+//192.168.1.9/Data /mnt/ds418 smb3 credentials=/root/.creds/ds418,rw,uid=1000,file_mode=0777,dir_mode=0777 0 0
