@@ -7,6 +7,8 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+set -x 
+
 # Check if we're root
 # https://askubuntu.com/questions/15853/how-can-a-script-check-if-its-being-run-as-root
 if [[ $EUID -ne 0 ]]; then
