@@ -73,6 +73,15 @@ cd /opt/mediavessel/docker/nzbget
 
 See: https://www.reddit.com/r/linuxquestions/comments/o8ubpc/docker_starts_before_filesystem_mounts/
 
+# Other things
+
+For Intel GPUs to monitor usage:
+
+```
+DEBIAN_FRONTEND=noninteractive apt-get -y install intel-gpu-tools
+intel_gpu_top
+```
+
 ## systemd automount
 
 Needs to be reworked; automount on the previous incarnation blasted syslog with "already mounted" messages from the mediavessel tooling. Generally automount hasn't worked in the event of power/network interruptions anyway so I might just fall back to `/etc/fstab`.
