@@ -28,22 +28,38 @@ DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 DEBIAN_FRONTEND=noninteractive apt-get -y install unattended-upgrades
 
 # Install useful system tools.
-DEBIAN_FRONTEND=noninteractive apt-get -y install git openssh-server cifs-utils vim net-tools apt-transport-https ca-certificates software-properties-common
+DEBIAN_FRONTEND=noninteractive apt-get -y install \
+   curl \
+   git \
+   openssh-server \
+   cifs-utils \
+   vim \
+   net-tools \
+   apt-transport-https \
+   ca-certificates \
+   software-properties-common \
+   gnupg
 
-# Install Docker
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-DEBIAN_FRONTEND=noninteractive apt-get -y update
-DEBIAN_FRONTEND=noninteractive apt-get -y install docker-ce
+# Add Docker repo and key; update repo list
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
+ 
+echo \
+ "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+ "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+ tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-# Install docker-compose from linuxserver.io
-curl -L --fail https://raw.githubusercontent.com/linuxserver/docker-docker-compose/master/run.sh -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
+apt-get update
 
+# Install Docker and components
+apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Disabled temporarily
 # Fix xrdp so that it can read the snakeoil certificate. Not critical to the whole operation though so ignore failure.
 # https://linuxize.com/post/how-to-install-xrdp-on-ubuntu-20-04/
-adduser xrdp ssl-cert || true
-systemctl restart xrdp || true
+# adduser xrdp ssl-cert || true
+# systemctl restart xrdp || true
 
 # Clone this repository locally (if needed) and update it
 git clone "https://github.com/jbillo/mediavessel.git" "${LOCAL_REPO_DIR}" || true
