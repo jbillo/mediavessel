@@ -1,0 +1,17 @@
+version: "2.1"
+services:
+  plex:
+    image: ghcr.io/linuxserver/plex
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+      - TZ=Etc/UTC
+    volumes:
+      - /opt/plex/config:/config
+      - /mnt:/mnt:shared
+    devices:
+       - /dev/dri:/dev/dri # For H/W transcoding
+    restart: unless-stopped

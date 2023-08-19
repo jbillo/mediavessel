@@ -64,6 +64,12 @@ After mounting, `cat /proc/mounts` to show version information and other options
 
 # Docker, docker-compose and containers
 
+In the `docker/` directory of this repo, there are several directories that contain `docker-compose.yml` files. There is also a `up.sh` file that can be invoked to download the latest container image and restart the container, eg:
+
+```
+cd /opt/mediavessel/docker/nzbget
+../up.sh
+```
 
 See: https://www.reddit.com/r/linuxquestions/comments/o8ubpc/docker_starts_before_filesystem_mounts/
 
