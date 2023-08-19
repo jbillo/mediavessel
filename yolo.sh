@@ -53,7 +53,7 @@ echo \
 apt-get update
 
 # Install Docker and components
-apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+DEBIAN_FRONTEND=noninteractive apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 # Disabled temporarily
 # Fix xrdp so that it can read the snakeoil certificate. Not critical to the whole operation though so ignore failure.
