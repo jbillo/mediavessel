@@ -75,10 +75,11 @@ See: https://www.reddit.com/r/linuxquestions/comments/o8ubpc/docker_starts_befor
 
 # Other things
 
-For Intel GPUs to monitor usage:
+## Monitor Intel GPU usage
 
 ```
 DEBIAN_FRONTEND=noninteractive apt-get -y install intel-gpu-tools
+# once installed, run:
 intel_gpu_top
 ```
 
