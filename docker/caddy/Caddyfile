@@ -1,0 +1,9 @@
+# heimdall (default)
+localhost, 192.168.1.5, home.ev98.ca {
+    reverse_proxy 192.168.1.5:8081
+}
+
+# ombi
+plexrequests.ev98.net {
+    reverse_proxy 192.168.1.5:3579
+}
