@@ -10,6 +10,7 @@ services:
       - TZ=Etc/UTC
     volumes:
       - /opt/tautulli/config:/config
+      - /opt/plex/config:/plexconfig
     ports:
       - 8181:8181
     restart: unless-stopped
