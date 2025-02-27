@@ -1,64 +1,68 @@
 # mediavessel
-Experiments with a containerized media server
+Experiments with a containerized media server - February 2025 update
 
-# Getting Started
-Install Ubuntu 22.04 LTS, with HWE kernel option. Notable installation config includes:
-* Use GPT/btrfs for root volume 
-* Enable SSH for easy system access, but make sure the host is not directly exposed to the Internet
+# Installation
+Assign a static DHCP lease to the system in question for convenience.
+Install Ubuntu Server 24.04.2 LTS. There was no HWE kernel option during setup (I had a 24.04.1 image) but this can be installed and enabled later.
+* Use GPT/btrfs for root volume; make sure LVM is extended to fill the disk (default seemed to be 100GiB, on my 2TiB NVMe drive I had to enter `1.860TB`)
+* Enable SSH for easy system access, but make sure the host is not directly exposed to the Internet; select a strong passphrase for the initial user and make sure to store it in your password manager
 
-Then pipe `wget` (installed by default, curl comes later) to `sudo bash`, as is the tradition when installing software from the Internet:
+# Basic Configuration
+I don't intend to maintain the previous `yolo.sh` so replicating a bunch of the original script here with inline comments as to why.
 
 ```
-wget -q -O - https://raw.githubusercontent.com/jbillo/mediavessel/main/yolo.sh | sudo bash
+# SSH to the system
+ssh user@192.168.1.6
+
+# Authorize your SSH public key for the first user.
+# ssh-copy-id not available by default on macOS so do this the old fashioned way, eg: on localhost:
+# pbcopy < ~/.ssh/id_rsa.pub
+
+# Get in as root the first time 
+sudo -i
+
+# Disable password prompt for sudo operations
+# sudoers.d contents are processed after the /etc/sudoers file, so the NOPASSWD config takes precedence
+echo "%sudo  ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/nopasswd-sudo-group
+
+# Ensure our package lists are updated and packages upgraded, and that we install security updates automatically
+# https://unix.stackexchange.com/questions/107194/make-apt-get-update-and-upgrade-automate-and-unattended
+DEBIAN_FRONTEND=noninteractive apt-get -y update 
+DEBIAN_FRONTEND=noninteractive apt-get -y upgrade 
+DEBIAN_FRONTEND=noninteractive apt-get -y install unattended-upgrades
+
+# Install HWE kernel, then reboot
+DEBIAN_FRONTEND=noninteractive apt-get -y install linux-generic-hwe-24.04
+
+# Install Docker, using instructions from https://docs.docker.com/engine/install/ubuntu/
+# podman might be an interesting option next time...
+
+# We'll need cifs-utils to properly be able to mount SMB3.1 volumes
+DEBIAN_FRONTEND=noninteractive apt-get -y install cifs-utils
 ```
 
-This will create an `/opt/mediavessel` directory with a git clone of the repository so we can run the next series of scripts. If you want to change this beforehand, export `LOCAL_REPO_DIR` to the desired path.
-
-# Configuring mounts
+# Configuring NAS mounts
 We assume that multiple NAS-type devices need to be mounted. With a previous experiment, automount was somewhat painful so we're going to fall back to fstab.
-
-## Locally attached storage
-Get the list of UUIDs with a combination of `fdisk -l` and `blkid`. For each disk, create a mountpoint under `/mnt` (eg: `mkdir -p /mnt/searaid1` and then add a line to `/etc/fstab` like:
-
-```
-/dev/disk/by-uuid/68959000-2fa1-4e54-aef4-c1c94b1dc06f /mnt/searaid1 btrfs defaults 0 2
-```
-
-For specific partitions, use `by-partuuid` in the `/dev/disk` path:
-
-```
-/dev/disk/by-partuuid/b5402f34-d21e-4ced-8183-3871e5ca9bb9 /mnt/crucialmx1 ext4 defaults 0 2
-```
-
-From `man fstab`, the last digit ("pass") for local disks can be set to 0 to avoid fsck operations. To check local disks: 
-
-> The root filesystem should be specified with a fs_passno of 1, and other filesystems should have a fs_passno of 2.
-
-Attempt to mount the disks live with `mount -a` and then confirm that you can list their contents.
-
-If like me, you'd initially configured multiple disks with btrfs in a raid1-style configuration, confirm that both are shown with `btrfs fi show`, then look for `Total devices`.
-
-See the [fstab](fstab) file for my configuration, I'm not really concerned if you know my naming conventions or disk UUIDs.
-
-Once the disk has been mounted, confirm (eg: with `ls`) that the user/group that your containers are running as will have access to the appropriate paths, including write if that's your choice.
-
-## Network attached storage
 
 For Windows/CIFS/SMB filesystems, newer kernels support the "smb3" filesystem type (`man mount.cifs`) and will auto-negotiate the highest SMB version supported by both client and server.
 
-Therefore, a reasonable configuration to add to `/etc/fstab` could look like:
+Therefore, a reasonable line to add to `/etc/fstab` could look like:
 
 ```
-//192.168.1.50/Data /mnt/5n2 smb3 guest,rw,uid=1000,file_mode=0777,dir_mode=0777 0 0
+//192.168.1.30/Data /mnt/ds1821plus smb3 credentials=/root/.nascreds,rw,uid=1000,file_mode=0777,dir_mode=0777,nofail,x-systemd.automount,_netdev 0 0
 ```
 
-If credentials are required, create a root-only readable file and use the `credentials=/path/to/creds` option. The file format is:
+Make sure the /root/.nascreds file is only readable by root. The format is
 
 ```
 username=value
 password=value
 domain=value
 ```
+
+with the `domain` line as optional. 
+
+Run `systemctl daemon-reload; mount -a` to mount all fstab devices. 
 
 After mounting, `cat /proc/mounts` to show version information and other options that were applied.
 
@@ -83,6 +87,5 @@ DEBIAN_FRONTEND=noninteractive apt-get -y install intel-gpu-tools
 intel_gpu_top
 ```
 
-## systemd automount
-
-Needs to be reworked; automount on the previous incarnation blasted syslog with "already mounted" messages from the mediavessel tooling. Generally automount hasn't worked in the event of power/network interruptions anyway so I might just fall back to `/etc/fstab`.
+# Credits/additional references
+* https://medium.com/@luukb/setting-up-plex-media-server-on-ubuntu-docker-on-beelink-s12-n100-60688bd56cc2
