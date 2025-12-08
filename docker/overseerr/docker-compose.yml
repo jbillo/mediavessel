@@ -12,5 +12,5 @@ services:
     ports:
       - 5055:5055
     volumes:
-      - /opt/overseerr/config:/config
+      - /opt/overseerr/config:/app/config
     restart: unless-stopped
